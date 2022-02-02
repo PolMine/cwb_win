@@ -60,6 +60,7 @@ RUN cd /root/expat-$EXPAT_VERSION &&                                            
 RUN cd /root/gettext-$GETTEXT_VERSION &&                                        \
     CC=$TARGET-w64-mingw32-gcc CC_FOR_BUILD=gcc ./configure                     \
       --enable-static                                                           \
+      --enable-shared \
       --disable-threads                                                         \
       --host=$TARGET-w64-mingw32                                                \
       --prefix=$MINGWDIR                          \
@@ -124,4 +125,5 @@ RUN cd /root/cwb/trunk && \
   export PATH=$PATH:$MINGWDIR/bin/ && \
   make clean && make depend && make cl && make utils
   
-CMD cd /root/cwb/trunk/utils/; for file in $(ls *.exe); do echo $file; cp /root/cwb/trunk/utils/$file /utils/$file; done
+CMD cd /root/cwb/trunk/utils/; for file in $(ls *.exe); do echo $file; cp /root/cwb/trunk/utils/$file /utils/$file; done; cp /usr/lib/gcc/x86_64-w64-mingw32/bin/libintl-9.dll  /utils/libintl-9.dll
+
