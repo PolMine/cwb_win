@@ -107,8 +107,11 @@ RUN sed -i -E "s/^PLATFORM=.*$/PLATFORM=mingw-cross/" config.mk && \
   sed -i -E "s|#\s+(LIBGLIB_DLL_PATH)\s+=.*$|LIBGLIB_DLL_PATH=$LIBDIR/|g" config.mk
 
 RUN sed -i -E "s/export\s*PKG_CONFIG_PATH=.+MINGW_CROSS_HOME.\/lib\/pkgconfig\s*;//g" definitions.mk && \
-  sed -i -E "s/\s+\\$\\(MINGW_CROSS_HOME\\)\/bin\/pcre-config/ pcre-config/g" definitions.mk
-
+  sed -i -E "s/\s+\\$\\(MINGW_CROSS_HOME\\)\/bin\/pcre-config/ pcre-config/g" definitions.mk && \
+    sed -i -E "s/^CFLAGS_ALL\s=/CFLAGS_ALL = -DPCRE_STATIC=-1 -DGLIB_STATIC_COMPILATION/g" definitions.mk && \
+    sed -i -E "s/PCRE_DEFINES\s:=\s-DPCRE_STATIC//" definitions.mk
+    
+    
 RUN sed -i -E "s/i586-mingw32msvc/x86_64-w64-mingw32/g" ./config/platform/mingw-cross && \
   sed -i -E "s/i586/x86_64/" ./config/platform/mingw-cross
 
