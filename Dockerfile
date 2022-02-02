@@ -91,7 +91,7 @@ RUN if [ "$TARGET" =  "x86_64" ]; then ARCH=64; else ARCH=32; fi && \
 
 
 # re-setting CWB_BUILD can be used to trigger re-building docker from here if RcppCWB code has changed  
-ARG CWB_BUILD=0005
+ARG CWB_BUILD=0006
 WORKDIR /root
 RUN svn co http://svn.code.sf.net/p/cwb/code/cwb --depth immediates && \
   cd cwb/trunk && \
@@ -107,13 +107,17 @@ RUN sed -i -E "s/^PLATFORM=.*$/PLATFORM=mingw-cross/" config.mk && \
   sed -i -E "s|#\s+(LIBGLIB_DLL_PATH)\s+=.*$|LIBGLIB_DLL_PATH=$LIBDIR/|g" config.mk
 
 RUN sed -i -E "s/export\s*PKG_CONFIG_PATH=.+MINGW_CROSS_HOME.\/lib\/pkgconfig\s*;//g" definitions.mk && \
-  sed -i -E "s/\s+\\$\\(MINGW_CROSS_HOME\\)\/bin\/pcre-config/ pcre-config/g" definitions.mk && \
+    sed -i -E "s/\s+\\$\\(MINGW_CROSS_HOME\\)\/bin\/pcre-config/ pcre-config/g" definitions.mk && \
     sed -i -E "s/^CFLAGS_ALL\s=/CFLAGS_ALL = -DPCRE_STATIC=-1 -DGLIB_STATIC_COMPILATION/g" definitions.mk && \
+    sed -i -E "s/^#PCRE_DEFINES/PCRE_DEFINES/" definitions.mk && \
+    sed -i -E "s/^#GLIB_DEFINES/GLIB_DEFINES/" definitions.mk && \
     sed -i -E "s/PCRE_DEFINES\s:=\s-DPCRE_STATIC//" definitions.mk
     
     
 RUN sed -i -E "s/i586-mingw32msvc/x86_64-w64-mingw32/g" ./config/platform/mingw-cross && \
   sed -i -E "s/i586/x86_64/" ./config/platform/mingw-cross
+
+# CMD cd /root/cwb/trunk/utils/; for file in $(ls *.exe); do echo $file; cp /root/cwb/trunk/utils/$file /utils/$file; done
 
 RUN cd /root/cwb/trunk && \
   export PKG_CONFIG_PATH=/opt/glib/lib/pkgconfig && \
